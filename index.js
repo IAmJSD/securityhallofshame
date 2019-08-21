@@ -6,9 +6,10 @@ require("./cached_queries").init().then(() => {
     // Defines the app.
     const app = express()
 
-    // Uses parsers to parse requests and shit.
+    // Adds the required Express middleware.
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use(express.static("frontend-dist"))
 
     // The API handler.
     new (require("./api_v1"))(app)

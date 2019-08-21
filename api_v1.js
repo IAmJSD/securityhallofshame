@@ -2,6 +2,8 @@
 const { getAll, append } = require("./cached_queries")
 const r = require("./rethinkdb_connection")
 const fetch = require("node-fetch")
+const sendEmail = require("./send_email")
+const uuid4 = require("uuid/v4")
 
 // Wraps the this context.
 const thisWrapper = (outerThis, key, ...args) => (req, res, next) => {
@@ -33,28 +35,68 @@ module.exports = class APIV1 {
     }
 
     async list(_, res) {
+        res.header("Access-Control-Allow-Origin", "*")
         res.json(await getAll())
     }
 
-    validateRecaptcha(req, _, next) {
+    async validateRecaptcha(req, _, next) {
         req.recaptcha = await (await fetch(
             "https://www.google.com/recaptcha/api/siteverify", {
-                body: {
-                    
+                headers: {
+                    "Content-Type": "application/json",
                 },
+                method: "POST",
+                body: JSON.stringify({
+                    secret: process.env.RECAPTCHA_SECRET,
+                    response: req.body.recaptchaResponse,
+                }),
             },
         )).json()
+        if (req.recaptcha.success && req.recaptcha.action !== "social") req.recaptcha.success = false
         next()
     }
 
-    post(req, res) {
+    async post(req, res) {
         if (!req.recaptcha.success) {
             res.status(403)
             res.json({
+                success: false,
                 error: "ReCAPTCHA error. Please try again.",
             })
         } else {
-            // lol
+            const key = String(req.body.key)
+            const innerKey = String(req.body.innerKey)
+            const value = String(req.body.value)
+            if (value === "" || innerKey === "" || key === "") {
+                res.status(400)
+                res.json({
+                    success: false,
+                    error: "A part of your request is blank.",
+                })
+            } else {
+                if (0.5 > req.recaptcha.score) {
+                    res.status(400)
+                    res.json({
+                        success: false,
+                        error: "You have a bad reCaptcha score. Please rerun.",
+                    })
+                } else {
+                    const id = uuid4()
+                    const query = {
+                        id, value, key, innerKey,
+                    }
+                    await r.table("pending_approval").insert(query).run()
+                    await sendEmail("Hall Of Shame Request", `
+                    Key: ${key}
+                    Inner Key: ${innerKey}
+                    Value: ${value}
+                    Approve: https://${process.env.DOMAIN}/v1/approve/${id}
+                    `)
+                    res.json({
+                        success: true,
+                    })
+                }
+            }
         }
     }
 }
