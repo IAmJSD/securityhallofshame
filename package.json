@@ -1,0 +1,17 @@
+{
+  "name": "securityhallofshame",
+  "version": "1.0.0",
+  "description": "The hall of shame for quotes/data breaches from projects and companies.",
+  "main": "index.js",
+  "author": "Jake Gealer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jakemakesstuff/securityhallofshame.git"
+  },
+  "license": "MPL-2.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "redis": "^2.8.0",
+    "rethinkdbdash": "^2.3.31"
+  }
+}
