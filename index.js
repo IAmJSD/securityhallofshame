@@ -12,7 +12,7 @@ require("./cached_queries").init().then(() => {
     app.use(express.static("frontend-dist"))
 
     // The API handler.
-    new (require("./api_v1"))(app)
+    require("./api_v1")(app)
 
     // Starts listening on port 7000.
     app.listen(7000, () => console.log("Listening on port 7000."))
