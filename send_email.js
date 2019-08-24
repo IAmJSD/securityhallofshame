@@ -1,6 +1,6 @@
 // Defines the Mailgun client.
 const mgClient = require("mailgun-js")({
-    domain: process.env.DOMAIN,
+    domain: `mg.${process.env.DOMAIN}`,
     apiKey: process.env.MAILGUN_API_KEY,
 })
 
