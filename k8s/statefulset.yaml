@@ -44,8 +44,8 @@ spec:
           value: Jake Gealer <jake@gealer.email>
         - name: MAIL_FROM
           value: Security Hall of Shame <noreply@mg.securityhallofshame.com>
-        - name: REDIS_HOST
-          value: securityhallofshame-cache:6379
+        - name: REDIS_HOSTNAME
+          value: securityhallofshame-cache
         - name: MAILGUN_API_KEY
           valueFrom:
             secretKeyRef:
