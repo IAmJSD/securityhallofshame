@@ -7,7 +7,7 @@ const mgClient = require("mailgun-js")({
 // Sends emails.
 module.exports = (subject, content) => new Promise((res, rej) => {
     mgClient.messages().send({
-        to: process.env.EMAIL_TO, from: process.env.MAIL_FROM,
+        to: process.env.MAIL_TO, from: process.env.MAIL_FROM,
         subject, text: content,
     }, err => {
         if (err) rej(err)
