@@ -23,13 +23,11 @@
   },
   "scripts": {
     "build-frontend": "parcel build ./frontend/index.html --out-dir=./frontend-dist --public-url=./",
-    "dev": "nodemon --exec npm start --watch ./* --watch ./frontend/**/*",
     "start": "npm run build-frontend && node ."
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "^3.0.0",
     "typescript": "^3.5.3",
-    "vue-template-compiler": "^2.6.10",
-    "nodemon": "1.19.1"
+    "vue-template-compiler": "^2.6.10"
   }
 }
