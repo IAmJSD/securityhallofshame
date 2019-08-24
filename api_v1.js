@@ -19,6 +19,7 @@ module.exports = class APIV1 {
         this.app.post("/v1/post", thisWrapper(this, "validateRecaptcha"), thisWrapper(this, "post"))
         this.app.get("/v1/list", thisWrapper(this, "list"))
         this.app.get("/v1/approve/:approvalId", thisWrapper(this, "approve"))
+        this.app.get("/v1/recaptcha_site_key", (_, res) => res.json(process.env.RECAPTCHA_SITE_KEY))
     }
 
     async approve(req, res) {
@@ -41,15 +42,11 @@ module.exports = class APIV1 {
 
     async validateRecaptcha(req, _, next) {
         req.recaptcha = await (await fetch(
-            "https://www.google.com/recaptcha/api/siteverify", {
+            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${encodeURIComponent(req.body.recaptchaResponse)}`, {
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
                 method: "POST",
-                body: JSON.stringify({
-                    secret: process.env.RECAPTCHA_SECRET,
-                    response: req.body.recaptchaResponse,
-                }),
             },
         )).json()
         if (req.recaptcha.success && req.recaptcha.action !== "social") req.recaptcha.success = false
