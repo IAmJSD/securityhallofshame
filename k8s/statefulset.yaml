@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: securityhallofshame
+spec:
+  replicas: 2
+  serviceName: securityhallofshame
+  selector:
+    matchLabels:
+      run: securityhallofshame
+  template:
+    metadata:
+      labels:
+        run: securityhallofshame
+    spec:
+      containers:
+      - name: securityhallofshame
+        image: jakemakesstuff/securityhallofshame
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7000
+        readinessProbe:
+          httpGet:
+            port: 7000
+            path: /
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            port: 7000
+            path: /
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        - name: RETHINKDB_HOSTNAME
+          value: rethinkdb-rethinkdb-cluster
+        - name: RETHINKDB_PASSWORD
+          value: rethinkdb
+        - name: DOMAIN
+          value: securityhallofshame.com
+        - name: MAIL_TO
+          value: Jake Gealer <jake@gealer.email>
+        - name: MAIL_FROM
+          value: Security Hall of Shame <noreply@mg.securityhallofshame.com>
+        - name: REDIS_HOST
+          value: securityhallofshame-cache:6379
+        - name: MAILGUN_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: securityhallofshame
+              key: mailgun_api_key
+        - name: RECAPTCHA_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: securityhallofshame
+              key: recaptcha_secret
+        - name: RECAPTCHA_SITE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: securityhallofshame
+              key: recaptcha_site_key

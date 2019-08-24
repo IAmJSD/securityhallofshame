@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: security-hall-of-shame-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - securityhallofshame.com
+    secretName: security-hall-of-shame-prod-letsencrypt
+  rules:
+  - host: securityhallofshame.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: securityhallofshame
+          servicePort: 7000
