@@ -27,12 +27,12 @@ module.exports = class APIV1 {
         const dbEntry = await r.table("pending_approval").get(approvalId).run()
         if (!dbEntry) {
             res.status(403)
-            res.text("Request not found.")
+            res.send("Request not found.")
             return
         }
         await r.table("pending_approval").get(approvalId).delete().run()
         await append(dbEntry.key, dbEntry.innerKey, dbEntry.value)
-        res.text("Done.")
+        res.send("Done.")
     }
 
     async list(_, res) {
