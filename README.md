@@ -8,6 +8,5 @@ The hall of shame for security fails. There are several enviroment variables tha
 - `RETHINKDB_HOSTNAME` - The RethinkDB hostname.
 - `RETHINKDB_PASSWORD` - The RethinkDB password.
 - `RETHINKDB_USER` - The RethinkDB user.
-- `MAIL_TO` - The user to e-mail to. For example `Jake Gealer <jake@gealer.email>`.
-- `MAIL_FROM` - The user to e-mail from. For example `Security Hall of Shame <noreply@mg.securityhallofshame.com>`.
-- `MAILGUN_API_KEY` - Your Mailgun API key.
+- `DISCORD_WEBHOOK` - The Discord webhook.
+- `DISCORD_USER_ID` - The Discord user ID.

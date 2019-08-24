@@ -2,7 +2,6 @@
 const { getAll, append } = require("./cached_queries")
 const r = require("./rethinkdb_connection")
 const fetch = require("node-fetch")
-const sendEmail = require("./send_email")
 const uuid4 = require("uuid/v4")
 
 // Wraps the this context.
@@ -83,12 +82,44 @@ module.exports = class APIV1 {
                         id, value, key, innerKey,
                     }
                     await r.table("pending_approval").insert(query).run()
-                    await sendEmail("Hall Of Shame Request", `
-                    Key: ${key}
-                    Inner Key: ${innerKey}
-                    Value: ${value}
-                    Approve: https://${process.env.DOMAIN}/v1/approve/${id}
-                    `)
+
+                    const msg = {
+                        content: `<@${process.env.DISCORD_USER_ID}>`,
+                        embeds: [
+                            {
+                                title: "Hall of Shame Request",
+                                fields: [
+                                    {
+                                        name: "Key",
+                                        value: key,
+                                    },
+                                    {
+                                        name: "Inner Key",
+                                        value: innerKey,
+                                    },
+                                    {
+                                        name: "Value",
+                                        value,
+                                    },
+                                    {
+                                        name: "Approve",
+                                        value: `https://${process.env.DOMAIN}/v1/approve/${id}`,
+                                    },
+                                ],
+                            },
+                        ],
+                    }
+
+                    const fetchRes = await fetch(process.env.DISCORD_WEBHOOK, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(msg),
+                    })
+
+                    if (!fetchRes.ok) throw await fetchRes.text()
+
                     res.json({
                         success: true,
                     })

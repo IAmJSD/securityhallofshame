@@ -40,17 +40,15 @@ spec:
           value: rethinkdb
         - name: DOMAIN
           value: securityhallofshame.com
-        - name: MAIL_TO
-          value: Jake Gealer <jake@gealer.email>
-        - name: MAIL_FROM
-          value: Security Hall of Shame <noreply@mg.securityhallofshame.com>
-        - name: REDIS_HOSTNAME
-          value: securityhallofshame-cache
-        - name: MAILGUN_API_KEY
+        - name: DISCORD_USER_ID
+          value: "280610586159611905"
+        - name: DISCORD_WEBHOOK
           valueFrom:
             secretKeyRef:
               name: securityhallofshame
-              key: mailgun_api_key
+              key: discord_webhook
+        - name: REDIS_HOSTNAME
+          value: securityhallofshame-cache
         - name: RECAPTCHA_SECRET
           valueFrom:
             secretKeyRef:
