@@ -21,7 +21,7 @@
                 <p><b>URL:</b></p>
                 <input class="input" v-model="url" placeholder="URL">
                 <hr style="margin: 5px">
-                <a class="button" @click="runSubmit">Submit</a>
+                <a :class="`button ${loading ? 'is-loading' : ''}`" @click="runSubmit">Submit</a>
             </section>
         </div>
     </div>
@@ -50,6 +50,7 @@
                 title: "",
                 url: "",
                 error: "",
+                loading: false,
             }
         },
         methods: {
@@ -58,37 +59,44 @@
                 return this.$data.selected
             },
             async runSubmit() {
-                const companyName = this.getCompanyName()
-                const title = this.$data.title
-                const url = this.$data.url
-                let recaptchaResponse
+                if (this.$data.loading) return
+
                 try {
-                    recaptchaResponse = await loadedRecaptcha.execute("social")
-                } catch (_) {
-                    alert("Failed to get a reCaptcha token.")
-                    return
-                }
-                const fetchRes = await fetch(
-                    "/v1/post", {
-                        headers: {
-                            "Content-Type": "application/json",
+                    this.$data.loading = true
+                    const companyName = this.getCompanyName()
+                    const title = this.$data.title
+                    const url = this.$data.url
+                    let recaptchaResponse
+                    try {
+                        recaptchaResponse = await loadedRecaptcha.execute("social")
+                    } catch (_) {
+                        alert("Failed to get a reCaptcha token.")
+                        return
+                    }
+                    const fetchRes = await fetch(
+                        "/v1/post", {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            method: "POST",
+                            body: JSON.stringify({
+                                recaptchaResponse,
+                                value: url,
+                                innerKey: title,
+                                key: companyName,
+                            }),
                         },
-                        method: "POST",
-                        body: JSON.stringify({
-                            recaptchaResponse,
-                            value: url,
-                            innerKey: title,
-                            key: companyName,
-                        }),
-                    },
-                )
-                if (!fetchRes.ok) {
-                    const j = await fetchRes.json()
-                    alert(j.error)
-                    return
+                    )
+                    if (!fetchRes.ok) {
+                        const j = await fetchRes.json()
+                        alert(j.error)
+                        return
+                    }
+                    this.toggle()
+                    alert("Thanks for your feedback!")
+                } finally {
+                    this.$data.loading = false
                 }
-                this.toggle()
-                alert("Thanks for your feedback!")
             },
             toggle() {
                 this.$data.toggled = !this.$data.toggled
