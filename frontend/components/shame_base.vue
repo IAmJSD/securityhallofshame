@@ -6,6 +6,7 @@
             <dl>
                 <li v-for="(v, k) in value" v-bind:key="k"><a :href="v">{{ k }}</a></li>
             </dl>
+            <hr>
         </div>
     </div>
 </template>
