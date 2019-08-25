@@ -10,8 +10,9 @@
             </header>
             <section class="modal-card-body">
                 <p>Please only submit security fails that are bad practices or security issues/breaches.</p>
+                <hr style="margin: 5px">
                 <p><b>Company/Project Name:</b></p>
-                <select v-model="selected" :selected="keys[0]">
+                <select v-model="selected" selected="Other">
                     <option v-for="key in keys" v-bind:key="key">{{ key }}</option>
                 </select>
                 <input v-if="selected === 'Other'" v-model="textbox" placeholder="Company/Project Name">
@@ -46,7 +47,7 @@
             return {
                 toggled: false,
                 keys,
-                selected: keys[0],
+                selected: "Other",
                 textbox: "",
                 title: "",
                 url: "",
