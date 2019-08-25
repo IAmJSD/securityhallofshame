@@ -9,6 +9,7 @@
                 <button class="delete" aria-label="close" @click="toggle"></button>
             </header>
             <section class="modal-card-body">
+                <p>Please only submit security fails that are bad practices or security issues/breaches.</p>
                 <p><b>Company/Project Name:</b></p>
                 <select v-model="selected" :selected="keys[0]">
                     <option v-for="key in keys" v-bind:key="key">{{ key }}</option>
